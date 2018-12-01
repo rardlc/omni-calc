@@ -66,7 +66,8 @@ def tryEquations(userVars):
             for key in userVars:           #Replace variables with values in equation
                 solveString = solveString.replace(key, str(userVars[key]))
 
-            solveVar = [x for x in eq if x not in list(userVars.keys())]
+
+            solveVar = [x for x in eq['formula'] if x not in list(userVars.keys())]
             solveVar = solveVar[0]
 
             print("Solving for ", solveVar)
