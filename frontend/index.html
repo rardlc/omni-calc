@@ -18,14 +18,14 @@
   <div class="row">
     <div class="form-group col-xs-6">
 
-      <label for="comment">Givens:</label>
+      <label for="givens">Givens:</label>
       <textarea class="form-control" rows="5" id="givens" onkeyup="validateWords(event)"></textarea>
 
     </div>
-    <div class="form-group col-xs-6">
+    <div class="form-group col-xs-6" id="results">
 
-      <label for="comment">Completed Equations:</label>
-      <textarea class="form-control" rows="5" id="comment"></textarea>
+      <label for="comment" >Completed Equations:</label>
+      <p class="form-control" id="resultsDisplay"><p>
 
     </div>
   </div>
@@ -47,7 +47,8 @@ function validateWords(press)
   for(var i = 0;i < lines.length+1;i++)
   {
 
-    if(lines[i] == undefined) {
+    if(lines[i] == undefined)
+    {
       continue;
     }
     //lines[i] is one line
@@ -62,7 +63,7 @@ function validateWords(press)
       //Check whether '=' is the first character
       if(j == 0 && line[j] == '=')
       {
-        console.log("Give your givens a name before the '=' sign.");
+        document.getElementById("resultsDisplay").innerHTML = "Give your givens a name before the '=' sign.";
         valid = false;
       }
       else if(line[j] == '=')
@@ -73,16 +74,15 @@ function validateWords(press)
         valid = true;
       }
 
-      else if (line[j] != '=' && value.length == 0) {
+      else if (line[j] != '=' && value.length == 0)
+      {
         //populate name with characters before the '='
         name += line[j];
       }
-      else{
-        valid = false;
-      }
     }
   }
-  if (json[json.length-1] == ','){
+  if (json[json.length-1] == ',')
+  {
     json = json.substring(0,json.length-1);
   }
   json += "}";
@@ -90,7 +90,44 @@ function validateWords(press)
   {
     //call Alex's code with json as input
 
+    //display returned results
+    var results = {
+  "results": {"x": "4","m":"2"},
+  "equations": {"slope": "mx+b-y"}
+}
+
+    //TEST: {Results: { 'x': 4, 'm':2}, Completed Equations : {mx+b-y}}
+    displayResults(results);
   }
+}
+
+function displayResults(results)
+{
+  //Where error checking occurs, add if statements for different types of errors
+  if (results == '{}')
+  {
+    output = document.getElementById("resultsDisplay").innerHTML = "Results came back empty!";
+  }
+  else
+  {
+    resultLength = Object.keys(results.results).length;
+    equationsLength = Object.keys(results.results).length
+    keyElem = document.getElementById("resultsDisplay");
+    keyElem.innerHTML = ""
+    for(var key in results.results)
+    {
+      keyElem.innerHTML += key + " : " + results.results[key];
+
+      // var keyElem = document.createElement("p"), txt = document.createTextNode(key + ": " + results.results[key]);
+      // keyElem.appendChild(txt);
+      // var element = document.getElementById("resultsDisplay");
+      // element.appendChild(keyElem);
+      // buildString = key + ":" + results.results[key];
+    }
+    // console.log(results.results + "\n" + results.equations)
+    // document.getElementById("resultsDisplay").innerHTML = results.Results + "\n" + results.Equations;
+  }
+
 }
 //Text Area Parser
 
