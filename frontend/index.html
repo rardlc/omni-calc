@@ -54,6 +54,7 @@ function validateWords(press)
     var line = lines[i];
     var name = "";
     var value = "";
+    var valid = false;
 
     //break down the line into characters
     for(var j = 0; j < line.length;j++)
@@ -62,17 +63,22 @@ function validateWords(press)
       if(j == 0 && line[j] == '=')
       {
         console.log("Give your givens a name before the '=' sign.");
+        valid = false;
       }
       else if(line[j] == '=')
       {
         value = line.slice(j+1, line.length+1);
         json += "{'" + name + "':'";
         json += value + "'},";
+        valid = true;
       }
 
       else if (line[j] != '=' && value.length == 0) {
         //populate name with characters before the '='
         name += line[j];
+      }
+      else{
+        valid = false;
       }
     }
   }
@@ -80,6 +86,11 @@ function validateWords(press)
     json = json.substring(0,json.length-1);
   }
   json += "}";
+  if (valid == true)
+  {
+    //call Alex's code with json as input
+
+  }
 }
 //Text Area Parser
 
