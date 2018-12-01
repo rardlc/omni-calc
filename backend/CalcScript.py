@@ -3,35 +3,6 @@ import requests
 import json
 from sympy import Symbol, solve
 
-synonymTable = {
-    "Mass": "m",
-    "mass": "m",
-    "M": "m",
-    "m": 'm',
-    "Time": "t",
-    "time": "t",
-    "T": "t",
-    "t": "t",
-    "Acceleration": "a",
-    "acceleration": "a",
-    "A": "a",
-    "a": "a",
-    "Velocity": "v",
-    "velocity": "v",
-    "V": "v",
-    "v": "v",
-    "Distance": "d",
-    "distance": "d",
-    "Displacement": "d",
-    "displacement": "d",
-    "d": "d",
-    "D": "d"
-}
-
-equationTable = {
-    "v * t + 0.5 * a * t ** 2 - d": ["v", "t", "a", "d"]
-}
-
 sinWebsite = 'http://omnicalc.alegemaate.com/api/get_synonyms.php?value='
 eqWebsite = 'http://omnicalc.alegemaate.com/api/get_equations.php?tokens='
 seperator = '-'
@@ -107,41 +78,9 @@ def tryEquations(userVars):
         print("No solvable equations")
 
 
-#    for eq in equationTable:
-#        if len(intersection(equationTable[eq], list(userVars.keys()))) == len(equationTable[eq]) - 1:        #Doable calculation found
-#            solveString = eq
-#            for key2 in userVars:           #Replace variables with values in equation
-#                solveString = solveString.replace(key2, str(userVars[key2]))
-#
-#            #print (intersection(equationTable[eq], list(userVars.keys())))
-#            solveVar = [x for x in equationTable[eq] if x not in list(userVars.keys())]
-#            solveVar = solveVar[0]
-#
-#            print("Solving for ", solveVar)
-#            x = Symbol(solveVar)
-#
-#            print("A holy answer has been found!")
-#            print(solveVar, " = ", solve(solveString, solveVar))
-
-
-
-
-
-
-
-
-
-    #Iterate through equations
-    #   Check if all but one required Vars is filled
-    #   If so, copy equation string
-    #   Replace symbols with values
-    #   solve and output
-
-
-
-#################
-############# Main
-#################
+##################################
+############## Main ##############
+##################################
 
 userVars = {
     "mass": 5,
