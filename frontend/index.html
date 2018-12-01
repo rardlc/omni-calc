@@ -19,7 +19,7 @@
     <div class="form-group col-xs-6">
 
       <label for="comment">Givens:</label>
-      <textarea class="form-control" rows="5" id="comment"></textarea>
+      <textarea class="form-control" rows="5" id="givens" onkeyup="validateWords(event)"></textarea>
 
     </div>
     <div class="form-group col-xs-6">
@@ -30,6 +30,94 @@
     </div>
   </div>
 </div>
+  <select id="select">
 
+    <option value="default">default</option>
+
+  </select>
+  <script>
+givensCount = 0;
+
+//Check whether the inputs are correct, once successful, make json and send it
+function validateWords(press)
+{
+  var json = "{";
+
+  var lines = document.getElementById('givens').value.split('\n');
+  for(var i = 0;i < lines.length+1;i++)
+  {
+
+    if(lines[i] == undefined) {
+      continue;
+    }
+    //lines[i] is one line
+    var line = lines[i];
+    var name = "";
+    var value = "";
+
+    //break down the line into characters
+    for(var j = 0; j < line.length;j++)
+    {
+      //Check whether '=' is the first character
+      if(j == 0 && line[j] == '=')
+      {
+        console.log("Give your givens a name before the '=' sign.");
+      }
+      else if(line[j] == '=')
+      {
+        value = line.slice(j+1, line.length+1);
+        json += "{'" + name + "':'";
+        json += value + "'},";
+      }
+
+      else if (line[j] != '=' && value.length == 0) {
+        //populate name with characters before the '='
+        name += line[j];
+      }
+    }
+  }
+  if (json[json.length-1] == ','){
+    json = json.substring(0,json.length-1);
+  }
+  json += "}";
+}
+//Text Area Parser
+
+
+//Dropdown population
+    // var dropdown = document.getElementById("select"),
+    //   matchedEquations = ["y=b+mx","v=ir"];
+    //
+    // for(var i = 0; i < matchedEquations.length; i++)
+    // {
+    //   var option = document.createElement("option"),
+    //     txt = document.createTextNode(matchedEquations[i]);
+    //   option.appendChild(txt);
+    //   option.setAttribute("value",matchedEquations[i]);
+    //   dropdown.insertBefore(option, select.lastChild);
+    // }
+
+    function findKeyPress(press)
+    {
+      var keynum;
+      if(window.event)
+      { // IE
+        keynum = press.keyCode;
+      } else if(press.which)
+      { // Netscape/Firefox/Opera
+        keynum = press.which;
+      }
+      return keynum;
+
+      //To use the function use something like this:
+      // key = findKeyPress(press);
+      // if (key == 13)
+      // {
+      //   finishedTyping = true
+      // }
+    }
+
+
+  </script>
 </body>
 </html>
