@@ -1,4 +1,9 @@
-import os
+#!/usr/bin/env python
+
+import cgi;
+import cgitb
+cgitb.enable()
+
 import requests
 import json
 from sympy import Symbol, solve
@@ -6,6 +11,23 @@ from sympy import Symbol, solve
 sinWebsite = 'http://omnicalc.alegemaate.com/api/get_synonyms.php?value='
 eqWebsite = 'http://omnicalc.alegemaate.com/api/get_equations.php?tokens='
 seperator = '-'
+
+def print_header():
+    print ("""Content-type: text/html\n""")
+
+def print_close():
+    print ("""""")
+
+def display_data(data):
+    print_header()
+    print ("<p>" + data + "</p>")
+    print_close()
+
+def display_error():
+    print_header()
+    print ("<p>An Error occurred parsing the parameters passed to this script.</p>")
+    print_close()
+
 
 def convertTokens(vars):
     for key in vars:
@@ -25,15 +47,6 @@ def convertTokens(vars):
 
     return vars
 
-
-def displayMenu():
-    print("####################################")
-    print("Welcome to PanaCalc v0.2")
-    print("Here's a list of commands:")
-    print("exit - terminate program")
-    print("show - show inputted variables")
-    print("calc - solve equations if possible")
-
 def parseJSON(jsonData):
     newDict = json.loads(jsonData)
 
@@ -50,6 +63,7 @@ def intersection(lst1, lst2):
 
 
 def tryEquations(userVars):
+    returnString = ""
     webString = eqWebsite
 
     for varKey in userVars:
@@ -61,6 +75,7 @@ def tryEquations(userVars):
     solvableEqs = json.loads(jsonFriendlyString)
 
     if solvableEqs != []:
+        returnString = returnString + str(solvableEqs)
         for eq in solvableEqs:
             solveString = eq["formula"]
             for key in userVars:           #Replace variables with values in equation
@@ -70,46 +85,40 @@ def tryEquations(userVars):
             solveVar = [x for x in eq['formula'] if x not in list(userVars.keys())]
             solveVar = solveVar[0]
 
-            print("Solving for ", solveVar)
+            returnString = returnString + "Solving for " + solveVar
             x = Symbol(solveVar)
 
-            print("A holy answer has been found!")
-            print(solveVar, " = ", solve(solveString, solveVar))
+            returnString = returnString + "A holy answer has been found!"
+            #returnString = returnString + solveVar + " = " + solve(solveString, solveVar)
     else:
-        print("No solvable equations")
+        returnString = "No solvable equations"
+        
+    return returnString
 
 
 ####################################
 ############### Main ###############
 ####################################
 
-userVars = {
+def main():
+  userVars = {
     "t": 2,
     "a": 3,
     "D": 7
-}
-done = False
-data = {}
+  }
 
+  data = {}
 
-while (not done):
-    displayMenu()
-    userInput = input()
+  form = cgi.FieldStorage()
 
-    #userVars = parseJSON(jsonData)
-
-    userVars = convertTokens(userVars)
-    if userInput == "exit":
-        done = True
-        break
-    if userInput == "show":
-        print(userVars)
-    if userInput == "calc":
-        if len(userVars) == 0:
-            print("No variables detected.")
-        tryEquations(userVars)
-
-
+  if (form.has_key("param1")):
+      #userVars = parseJSON(jsonData)
+      userVars = convertTokens(userVars)
+      display_data(tryEquations(userVars))
+  else:
+      display_error()
+      
+main()
 
 
 
