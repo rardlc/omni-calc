@@ -1,4 +1,6 @@
 import os
+import requests
+import urllib
 import json
 from sympy import Symbol, solve
 
@@ -31,24 +33,35 @@ equationTable = {
     "v * t + 0.5 * a * t ** 2 - d": ["v", "t", "a", "d"]
 }
 
-
+website = 'http://omnicalc.alegemaate.com/api/get_synonyms.php?value='
 
 def convertTokens(vars):
-    #iterate through vars
-    #   search string in synonym table
-    #   Replace with value
+
 
     for key in vars:
-        if key in synonymTable:
-            vars[synonymTable[key]] = vars.pop(key)
+        r = requests.get(website + str(key))        #Get key from api
+        print(website + str(key))
+        #print(r.text)
+
+        jsonFriendlyString = r.text.replace("'", "\"")               #Convert to json
+        temp = json.loads(jsonFriendlyString)
+
+        if temp != []:                         #Converts to dict
+            temp = temp[0]
+            token = temp["token"]
+            print(token)                       #Token found!
+            vars[token] = vars.pop(key)
         else:
-            print(key, " was not found.")
+            print(key, " was not found")
+
+
+    #for key in vars:
+    #    if key in synonymTable:
+    #        vars[synonymTable[key]] = vars.pop(key)
+    #    else:
+    #        print(key, " was not found.")
 
     return vars
-
-def intersection(lst1, lst2):
-    lst3 = [value for value in lst1 if value in lst2]
-    return lst3
 
 
 def displayMenu():
@@ -58,6 +71,21 @@ def displayMenu():
     print("exit - terminate program")
     print("show - show inputted variables")
     print("calc - solve equations if possible")
+
+def parseJSON(jsonData):
+    newDict = json.loads(jsonData)
+
+    for key in newDict:
+        newDict[key.strip()] = newDict.pop(key).strip()
+
+    return newDict
+
+
+
+def intersection(lst1, lst2):
+    lst3 = [value for value in lst1 if value in lst2]
+    return lst3
+
 
 def tryEquations(userVars):
 
@@ -97,17 +125,21 @@ def tryEquations(userVars):
 ############# Main
 #################
 
-done = False
 userVars = {
     "mass": 5,
     "t": 2,
-    "acceleration": 3,
+    "Acceleration": 3,
     "D": 7
 }
+done = False
+data = {}
+
 
 while (not done):
     displayMenu()
     userInput = input()
+
+    #userVars = parseJSON(jsonData)
 
     userVars = convertTokens(userVars)
     if userInput == "exit":
@@ -119,12 +151,6 @@ while (not done):
         if len(userVars) == 0:
             print("No variables detected.")
         tryEquations(userVars)
-
-
-json_string = '{"first_name": "Guido", "last_name":"Rossum"}'
-parsed_json = json.loads(json_string)
-print(parsed_json['first_name'])
-
 
 
 
