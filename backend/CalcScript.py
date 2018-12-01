@@ -1,6 +1,5 @@
 import os
 import requests
-import urllib
 import json
 from sympy import Symbol, solve
 
