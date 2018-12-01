@@ -33,14 +33,14 @@ equationTable = {
     "v * t + 0.5 * a * t ** 2 - d": ["v", "t", "a", "d"]
 }
 
-website = 'http://omnicalc.alegemaate.com/api/get_synonyms.php?value='
+sinWebsite = 'http://omnicalc.alegemaate.com/api/get_synonyms.php?value='
+eqWebsite = 'http://omnicalc.alegemaate.com/api/get_equations.php?tokens='
+seperator = '-'
 
 def convertTokens(vars):
-
-
     for key in vars:
-        r = requests.get(website + str(key))        #Get key from api
-        print(website + str(key))
+        r = requests.get(sinWebsite + str(key))        #Get key from api
+        #print(website + str(key))
         #print(r.text)
 
         jsonFriendlyString = r.text.replace("'", "\"")               #Convert to json
@@ -48,18 +48,10 @@ def convertTokens(vars):
 
         if temp != []:                         #Converts to dict
             temp = temp[0]
-            token = temp["token"]
-            print(token)                       #Token found!
+            token = temp["token"]              #We got a token
             vars[token] = vars.pop(key)
         else:
             print(key, " was not found")
-
-
-    #for key in vars:
-    #    if key in synonymTable:
-    #        vars[synonymTable[key]] = vars.pop(key)
-    #    else:
-    #        print(key, " was not found.")
 
     return vars
 
@@ -88,14 +80,22 @@ def intersection(lst1, lst2):
 
 
 def tryEquations(userVars):
+    webString = eqWebsite
 
-    for eq in equationTable:
-        if len(intersection(equationTable[eq], list(userVars.keys()))) == len(equationTable[eq]) - 1:        #Doable calculation found
-            solveString = eq
-            for key2 in userVars:           #Replace variables with values in equation
-                solveString = solveString.replace(key2, str(userVars[key2]))
+    for varKey in userVars:
+        webString = webString + str(varKey) + seperator
+    webString = webString[:-1]
 
-            #print (intersection(equationTable[eq], list(userVars.keys())))
+    r = requests.get(webString)
+    jsonFriendlyString = r.text.replace("'", "\"")  # Convert to json
+    solvableEqs = json.loads(jsonFriendlyString)
+
+    if solvableEqs != []:
+        for eq in solvableEqs:
+            solveString = eq["formula"]
+            for key in userVars:           #Replace variables with values in equation
+                solveString = solveString.replace(key, str(userVars[key]))
+
             solveVar = [x for x in equationTable[eq] if x not in list(userVars.keys())]
             solveVar = solveVar[0]
 
@@ -104,6 +104,25 @@ def tryEquations(userVars):
 
             print("A holy answer has been found!")
             print(solveVar, " = ", solve(solveString, solveVar))
+    else:
+        print("No solvable equations")
+
+
+#    for eq in equationTable:
+#        if len(intersection(equationTable[eq], list(userVars.keys()))) == len(equationTable[eq]) - 1:        #Doable calculation found
+#            solveString = eq
+#            for key2 in userVars:           #Replace variables with values in equation
+#                solveString = solveString.replace(key2, str(userVars[key2]))
+#
+#            #print (intersection(equationTable[eq], list(userVars.keys())))
+#            solveVar = [x for x in equationTable[eq] if x not in list(userVars.keys())]
+#            solveVar = solveVar[0]
+#
+#            print("Solving for ", solveVar)
+#            x = Symbol(solveVar)
+#
+#            print("A holy answer has been found!")
+#            print(solveVar, " = ", solve(solveString, solveVar))
 
 
 
@@ -151,9 +170,6 @@ while (not done):
         if len(userVars) == 0:
             print("No variables detected.")
         tryEquations(userVars)
-
-
-
 
 
 
