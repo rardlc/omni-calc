@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel = "stylesheet"
+   type = "text/css"
+   href = "style.css" />
 </head>
 <body>
 
@@ -25,7 +28,8 @@
     <div class="form-group col-xs-6" id="results">
 
       <label for="comment" >Completed Equations:</label>
-      <p class="form-control" id="resultsDisplay"><p>
+      <p id="resultsDisplay"><p>
+      <p id="equationsDisplay"><p>
 
     </div>
   </div>
@@ -112,20 +116,26 @@ function displayResults(results)
   {
     resultLength = Object.keys(results.results).length;
     equationsLength = Object.keys(results.results).length
-    keyElem = document.getElementById("resultsDisplay");
-    keyElem.innerHTML = ""
+    resultsElem = document.getElementById("resultsDisplay");
+    equationsElem = document.getElementById("equationsDisplay");
+    resultsElem.innerHTML = ""
+    equationsElem.innerHTML = ""
     for(var key in results.results)
     {
-      keyElem.innerHTML += key + " : " + results.results[key];
-
-      // var keyElem = document.createElement("p"), txt = document.createTextNode(key + ": " + results.results[key]);
-      // keyElem.appendChild(txt);
-      // var element = document.getElementById("resultsDisplay");
-      // element.appendChild(keyElem);
-      // buildString = key + ":" + results.results[key];
+      resultsElem.innerHTML += key + " : " + results.results[key] + "\n";
+    }
+    for(var key in results.equations)
+    {
+      equationsElem.innerHTML += key + " : " + results.equations[key] + " ";
     }
     // console.log(results.results + "\n" + results.equations)
     // document.getElementById("resultsDisplay").innerHTML = results.Results + "\n" + results.Equations;
+
+    // var keyElem = document.createElement("p"), txt = document.createTextNode(key + ": " + results.results[key]);
+    // keyElem.appendChild(txt);
+    // var element = document.getElementById("resultsDisplay");
+    // element.appendChild(keyElem);
+    // buildString = key + ":" + results.results[key];
   }
 
 }
