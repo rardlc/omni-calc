@@ -1,0 +1,12 @@
+
+- Add equation browser to website
+- Add tab that shows nearly completed equations
+
+
+- Add calculated variables to user's givens/userVars in python script
+   - Could be automatic, won't show up in text box
+   - Could have button, when pressed adds result=value in text box
+
+
+
+- Find way to reduce lag
