@@ -49,7 +49,10 @@ def convertTokens(vars):
     return vars
 
 def parseJSON(jsonData):
-    newDict = json.loads(jsonData)
+    try:
+        newDict = json.loads(jsonData)
+    except:
+        return {}
     for key in newDict:
         newDict[key.strip()] = newDict.pop(key)
      
@@ -75,19 +78,21 @@ def tryEquations(userVars):
     solvableEqs = json.loads(jsonFriendlyString)
 
     if solvableEqs != []:
-        returnString = returnString + str(solvableEqs)
         for eq in solvableEqs:
             solveString = eq["formula"]
+            returnString = str(eq["formula"])
             for key in userVars:           #Replace variables with values in equation
                 solveString = solveString.replace(key, str(userVars[key]))
 
 
             solveVar = [x for x in eq['formula'] if x not in list(userVars.keys())]
-            solveVar = solveVar[0]
 
-            x = Symbol(solveVar)
+            x = ''
+            for z in solveVar:
+              if z.isalpha():
+                x = Symbol(z)
 
-            returnString = returnString + solveVar + " = " + solve(solveString, solveVar)
+            returnString = returnString + "<br>" + str(x) + " = " + str(solve(solveString, x))
     else:
         returnString = "No solvable equations"
         
@@ -105,10 +110,10 @@ def main():
 
   if (form.has_key("param1")):      
       userVars = parseJSON(form["param1"].value)
-      display_data(str(userVars['y']))
-      #userVars = convertTokens(userVars)
-      
-      #display_data(tryEquations(userVars))
+      if userVars != {}:
+        #userVars = convertTokens(userVars)
+        #display_data(str(userVars))
+        display_data(tryEquations(userVars))
   else:
       display_error()
       
