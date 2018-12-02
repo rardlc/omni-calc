@@ -6,6 +6,7 @@ cgitb.enable()
 
 import requests
 import json
+import unicodedata
 from sympy import Symbol, solve
 
 sinWebsite = 'http://omnicalc.alegemaate.com/api/get_synonyms.php?value='
@@ -49,10 +50,9 @@ def convertTokens(vars):
 
 def parseJSON(jsonData):
     newDict = json.loads(jsonData)
-
     for key in newDict:
-        newDict[key.strip()] = newDict.pop(key).strip()
-
+        newDict[key.strip()] = newDict.pop(key)
+     
     return newDict
 
 
@@ -85,11 +85,9 @@ def tryEquations(userVars):
             solveVar = [x for x in eq['formula'] if x not in list(userVars.keys())]
             solveVar = solveVar[0]
 
-            returnString = returnString + "Solving for " + solveVar
             x = Symbol(solveVar)
 
-            returnString = returnString + "A holy answer has been found!"
-            #returnString = returnString + solveVar + " = " + solve(solveString, solveVar)
+            returnString = returnString + solveVar + " = " + solve(solveString, solveVar)
     else:
         returnString = "No solvable equations"
         
@@ -101,20 +99,16 @@ def tryEquations(userVars):
 ####################################
 
 def main():
-  userVars = {
-    "t": 2,
-    "a": 3,
-    "D": 7
-  }
-
   data = {}
 
   form = cgi.FieldStorage()
 
-  if (form.has_key("param1")):
-      #userVars = parseJSON(jsonData)
-      userVars = convertTokens(userVars)
-      display_data(tryEquations(userVars))
+  if (form.has_key("param1")):      
+      userVars = parseJSON(form["param1"].value)
+      display_data(str(userVars['y']))
+      #userVars = convertTokens(userVars)
+      
+      #display_data(tryEquations(userVars))
   else:
       display_error()
       

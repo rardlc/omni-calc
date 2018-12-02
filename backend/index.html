@@ -10,6 +10,36 @@
   <link rel = "stylesheet"
    type = "text/css"
    href = "style.css" />
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js">
+    </script>
+    <script>
+      function ProcessSimpleCgi(params)
+      {
+          $.ajax(
+          {
+              type: "GET",
+              url: "cgi-bin/CalcScript.py?",
+              data: "param1=" + params,
+              dataType: "html",
+              success: function (html)
+              {
+                  var params = $(html).filter(function(){ return $(this).is('p') });
+                  params.each(
+                      function()
+                      {
+                          var value = "<p>" + $(this).html() + "</p>";
+                          $("#equationsDisplay").html( value );
+                      }
+                  );
+              },
+              error: function(request, ajaxOptions, thrownError)
+              {
+                  $("#resultsDisplay").html(request.responseText);
+                  $("#resultsDisplay").html("5566");
+              }
+          });
+      }
+    </script>
 </head>
 <body>
 
@@ -73,8 +103,7 @@ function validateWords(press)
       else if(line[j] == '=')
       {
         value = line.slice(j+1, line.length+1);
-        json += "{'" + name + "':'";
-        json += value + "'},";
+        json += "\"" + name + "\":" + value + ",";
         valid = true;
       }
 
@@ -94,6 +123,8 @@ function validateWords(press)
   {
     //call Alex's code with json as input
 
+    ProcessSimpleCgi(json);
+    
     //display returned results
     var results = {
   "results": {"x": "4","m":"2"},
@@ -101,7 +132,8 @@ function validateWords(press)
 }
 
     //TEST: {Results: { 'x': 4, 'm':2}, Completed Equations : {mx+b-y}}
-    displayResults(results);
+    
+    //displayResults(results);
   }
 }
 
